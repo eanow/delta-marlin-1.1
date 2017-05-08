@@ -420,13 +420,15 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(eeprom_slot);
     #endif //AUTO_BED_LEVELING_UBL
 
-    // 9 floats for DELTA / Z_DUAL_ENDSTOPS
+    // 11 floats for DELTA / Z_DUAL_ENDSTOPS
     #if ENABLED(DELTA)
       EEPROM_WRITE(endstop_adj);               // 3 floats
       EEPROM_WRITE(delta_radius);              // 1 float
       EEPROM_WRITE(delta_diagonal_rod);        // 1 float
       EEPROM_WRITE(delta_segments_per_second); // 1 float
-      EEPROM_WRITE(delta_calibration_radius);  // 1 float
+      EEPROM_WRITE(delta_diagonal_rod_trim_tower_1);  // 1 float
+      EEPROM_WRITE(delta_diagonal_rod_trim_tower_2);  // 1 float
+      EEPROM_WRITE(delta_diagonal_rod_trim_tower_3);  // 1 float
       EEPROM_WRITE(delta_tower_angle_trim);    // 2 floats
       dummy = 0.0f;
       for (uint8_t q = 3; q--;) EEPROM_WRITE(dummy);
@@ -802,7 +804,9 @@ void MarlinSettings::postprocess() {
         EEPROM_READ(delta_radius);              // 1 float
         EEPROM_READ(delta_diagonal_rod);        // 1 float
         EEPROM_READ(delta_segments_per_second); // 1 float
-        EEPROM_READ(delta_calibration_radius);  // 1 float
+        EEPROM_READ(delta_diagonal_rod_trim_tower_1);  // 1 float
+        EEPROM_READ(delta_diagonal_rod_trim_tower_2);  // 1 float
+        EEPROM_READ(delta_diagonal_rod_trim_tower_3);  // 1 float
         EEPROM_READ(delta_tower_angle_trim);    // 2 floats
         dummy = 0.0f;
         for (uint8_t q=3; q--;) EEPROM_READ(dummy);
@@ -1086,7 +1090,9 @@ void MarlinSettings::reset() {
     delta_radius = DELTA_RADIUS;
     delta_diagonal_rod = DELTA_DIAGONAL_ROD;
     delta_segments_per_second = DELTA_SEGMENTS_PER_SECOND;
-    delta_calibration_radius = DELTA_CALIBRATION_RADIUS;
+    delta_diagonal_rod_trim_tower_1 = DELTA_DIAGONAL_ROD_TRIM_TOWER_1;
+    delta_diagonal_rod_trim_tower_2 = DELTA_DIAGONAL_ROD_TRIM_TOWER_2;
+    delta_diagonal_rod_trim_tower_3 = DELTA_DIAGONAL_ROD_TRIM_TOWER_3;
     delta_tower_angle_trim[A_AXIS] = dta[A_AXIS] - dta[C_AXIS];
     delta_tower_angle_trim[B_AXIS] = dta[B_AXIS] - dta[C_AXIS];
     home_offset[Z_AXIS] = 0;
@@ -1490,14 +1496,16 @@ void MarlinSettings::reset() {
       SERIAL_ECHOLNPAIR(" Z", LINEAR_UNIT(endstop_adj[Z_AXIS]));
       if (!forReplay) {
         CONFIG_ECHO_START;
-        SERIAL_ECHOLNPGM("Delta settings: L<diagonal_rod> R<radius> H<height> S<segments_per_s> B<calibration radius> XYZ<tower angle corrections>");
+        SERIAL_ECHOLNPGM("Delta settings: L<diagonal_rod> R<radius> H<height> S<segments_per_s> ABC=diagonal_rod_trim_tower_[123] XYZ<tower angle corrections>");
       }
       CONFIG_ECHO_START;
       SERIAL_ECHOPAIR("  M665 L", LINEAR_UNIT(delta_diagonal_rod));
       SERIAL_ECHOPAIR(" R", LINEAR_UNIT(delta_radius));
       SERIAL_ECHOPAIR(" H", LINEAR_UNIT(DELTA_HEIGHT + home_offset[Z_AXIS]));
       SERIAL_ECHOPAIR(" S", delta_segments_per_second);
-      SERIAL_ECHOPAIR(" B", LINEAR_UNIT(delta_calibration_radius));
+      SERIAL_ECHOPAIR(" A", delta_diagonal_rod_trim_tower_1);
+      SERIAL_ECHOPAIR(" B", delta_diagonal_rod_trim_tower_2);
+      SERIAL_ECHOPAIR(" C", delta_diagonal_rod_trim_tower_3);
       SERIAL_ECHOPAIR(" X", LINEAR_UNIT(delta_tower_angle_trim[A_AXIS]));
       SERIAL_ECHOPAIR(" Y", LINEAR_UNIT(delta_tower_angle_trim[B_AXIS]));
       SERIAL_ECHOPAIR(" Z", 0.00);

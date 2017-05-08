@@ -314,6 +314,9 @@ int16_t code_value_temp_diff();
                delta_diagonal_rod,
                delta_calibration_radius,
                delta_segments_per_second,
+               delta_diagonal_rod_trim_tower_1,
+               delta_diagonal_rod_trim_tower_2,
+               delta_diagonal_rod_trim_tower_3,
                delta_tower_angle_trim[2],
                delta_clip_start_height;
   void recalc_delta_settings(float radius, float diagonal_rod);
